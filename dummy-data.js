@@ -22,7 +22,7 @@ const DUMMY_EVENTS = [
         title: 'FIFA Worldcup starts from November',
         description: 'Yay!!! FIFA Worldcup starts from November! Yes, everyone! In this event, we are gonna have so much fun.',
         location: 'Somestreet 25, 1234 San Somewhereo',
-        date: '2021-05-12',
+        date: '2022-06-12',
         image: 'images/wc-event.jpg',
         isFeatured: true
     },

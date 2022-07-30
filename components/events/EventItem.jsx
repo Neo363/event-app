@@ -16,7 +16,7 @@ function EventItem({ event }) {
 
   // Adding line break after comma in address
   const formattedAddress = location.replace(", ", "\n");
-  const exploreLink = `/event/${id}`;
+  const exploreLink = `/events/${id}`;
 
   return (
     <li className={classes.item}>
