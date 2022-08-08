@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
 import useSWR from "swr";
@@ -5,20 +6,23 @@ import EventList from "../../components/events/EventList";
 import ResultsTitle from "../../components/events/ResultsTitle";
 import Button from "../../components/ui/Button";
 import ErrorAlert from "../../components/ui/ErrorAlert";
-import { getFilteredEvents } from "../../helpers/api-util";
 
-function FilteredEventsPage(props) {
+const fetcher = (url) => fetch(url).then((res) => res.json());
+
+function FilteredEventsPage() {
   const [loadedEvents, setLoadedEvents] = useState();
   const router = useRouter();
 
   const filterData = router.query.slug;
 
-  return console.log(filterData);
+  const { data, error } = useSWR(
+    'https://event-app-5481c-default-rtdb.firebaseio.com/events.json', fetcher
+  );
 
-  const { data, error } = useSWR('https://event-app-5481c-default-rtdb.firebaseio.com/events.json');
+  console.log(data);
   
   useEffect(() => {
-    if (!data) {
+    if (data) {
       const events = [];
 
       for (const key in data) {
@@ -32,15 +36,36 @@ function FilteredEventsPage(props) {
     }
   }, [data]);
 
+  let pageHeadData = <Head>
+    <title>Filtered Events</title>
+    <meta 
+      name="description"
+      content={`A list of filtered events.`}
+    />
+  </Head>;
+
   if (!loadedEvents) {
-    return <p className="center">Loading...</p>;
-  }
+    return <Fragment>
+        {pageHeadData}
+        <p className="center">Loading...</p>
+      </Fragment>
+  } 
 
   const filteredYear = filterData[0];
   const filteredMonth = filterData[1];
 
   const numYear = +filteredYear; // converting to num
   const numMonth = +filteredMonth;
+
+  pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta 
+        name="description" 
+        content={`All events for ${numMonth}/${numYear}.`} 
+      />
+    </Head>
+  );
 
   if (
     isNaN(numYear) ||
@@ -53,6 +78,7 @@ function FilteredEventsPage(props) {
   ) {
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>Invalid filter. Please adjust your values!</p>
         </ErrorAlert>
@@ -70,15 +96,19 @@ function FilteredEventsPage(props) {
     return eventDate.getFullYear() === numYear && eventDate.getMonth() === numMonth-1;
   });
 
+
+
   // const filteredEvents = props.events;
 
   if (!filteredEvents || filteredEvents.length === 0) {
     return <Fragment>
+      {pageHeadData}
       <ErrorAlert>
         <p>No Events Found!</p>
       </ErrorAlert>
+
       <div className="center">
-        <Button href='/events'>Show All Events</Button>
+        <Button link='/events'>Show All Events</Button>
       </div>
     </Fragment>
   }
@@ -86,6 +116,7 @@ function FilteredEventsPage(props) {
   const date = new Date(numYear, numMonth - 1);
 
   return <Fragment>
+    {pageHeadData}
     <ResultsTitle date={date}/>
     <EventList items={filteredEvents}/> 
   </Fragment>;
