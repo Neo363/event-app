@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import EventList from "../components/events/EventList";
 import { getFeaturedEvents } from "../helpers/api-util";
 import Head from 'next/head';
+import NewsletterRegistration from "../components/input/NewsLetterRegistration";
 
 function HomePage(props) {
 
@@ -15,9 +16,8 @@ function HomePage(props) {
         />
       </Head>
   
-      <div>
-          <EventList items={ props.events }/>
-      </div>
+      <NewsletterRegistration />
+      <EventList items={ props.events }/>
     </div>
   )
 }
